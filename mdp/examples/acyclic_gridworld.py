@@ -1,7 +1,7 @@
-from  mdp.abstract_mdp import AbstractMDP
+from mdp.abstract_mdp import AbstractMDP
 import numpy as np
 
-class acyclicGridMDP(AbstractMDP):
+class AcyclicGridMDP(AbstractMDP):
     """
     An MDP representing the following corridor gridworld:
 

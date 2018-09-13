@@ -1,7 +1,7 @@
-from  mdp.abstract_mdp import AbstractMDP
+from mdp.abstract_mdp import AbstractMDP
 import numpy as np
 
-class berkeleyGridMDP(AbstractMDP):
+class BerkeleyGridMDP(AbstractMDP):
     """
     A gridworld MDP taken from Berkeley lecture 
     (https://people.eecs.berkeley.edu/~pabbeel/cs287-fa12/slides/mdps-exact-methods.pdf):
@@ -51,9 +51,20 @@ class berkeleyGridMDP(AbstractMDP):
                     8  : np.array((3,2)),
                     9  : np.array((3,3)),
                     10 : np.array((3,4))}
-
+    
     # The Terminal States
     TERMINAL_STATES = {3, 6}
+
+    # The known value function for a given horizon (for testing)
+    HORIZON_TO_KNOWN_V = {0    : [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                         1    : [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+                         2    : [0.0, 0.0, .72, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+                         3    : [0.0, 0.52, .78, 1.0, 0.0, 0.43, -1.0, 0.0, 0.0, 0.0, 0.0],
+                         100  : [.64, .74, .85, 1.0, .57, .57, -1.0, .49, .43, .48, .28],
+                         1000 : [.64, .74, .85, 1.0, .57, .57, -1.0, .49, .43, .48, .28]}
+
+    # Known optimal policy
+    KNOWN_POLICY = [1, 1, 1, None, 2, 2, None, 2, 0, 2, 0]
 
 
     def __init__(self, gamma=0.9):
