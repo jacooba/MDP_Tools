@@ -1,45 +1,46 @@
 from mdp.abstract_mdp import AbstractMDP
 import numpy as np
 
-class LargeMDP(AbstractMDP):
+class RandomLargeMDP(AbstractMDP):
     """
     A large MDP for testing how long it takes to solve. 
     The transition and reward matrices are filled with random "junk" values.
+    (Set up to be different values for every instance)
     """
 
-    # MDP with many states
-    NUM_ACTIONS = 10
-    NUM_STATES = 10000
-    NUM_TERMINALS = 4
-    # Fill R and T with "junk"
-    R_MATRIX = np.random.rand(NUM_STATES, NUM_ACTIONS)
-    T_MATRIX = np.random.rand(NUM_STATES, NUM_ACTIONS, NUM_STATES)
-    # Normalize T into a distribution
-    T_MATRIX = T_MATRIX/np.sum(T_MATRIX, axis=2, keepdims=True)
-    # Replace terminal distributions with 0 vector
-    T_MATRIX[range(NUM_TERMINALS)] = np.zeros((NUM_ACTIONS, NUM_STATES))
+    # Define how large MDP is
+    _NUM_ACTIONS = 10
+    _NUM_STATES = 10000
+    _NUM_TERMINALS = 4
 
     def __init__(self, gamma=0.9):
         super().__init__(gamma)
+        # Fill R and T with "junk"
+        t_matrix_shape = (self.__class__._NUM_STATES, 
+                          self.__class__._NUM_ACTIONS, 
+                          self.__class__._NUM_STATES)
+        self._r_matrix = np.random.rand(*(t_matrix_shape[:2]))
+        self._t_matrix = np.random.rand(*t_matrix_shape)
+        # Normalize T into a distribution
+        self._t_matrix = self._t_matrix/np.sum(self._t_matrix, axis=2, keepdims=True)
+        # Replace terminal distributions with 0 vector
+        self._t_matrix[range(self.__class__._NUM_TERMINALS)] = np.zeros(t_matrix_shape[1:])
 
-    @classmethod
-    def num_actions(cls):
+    def num_actions(self):
         """
         The number of actions (i.e. |A|)
         In this MDP: left, right, up, down
         """
-        return cls.NUM_ACTIONS
+        return self.__class__._NUM_ACTIONS
 
-    @classmethod
-    def num_states(cls):
+    def num_states(self):
         """
         The number of states (i.e. |S|)
         In this MDP: 6 grid spots
         """
-        return cls.NUM_STATES
+        return self.__class__._NUM_STATES
     
-    @classmethod
-    def R(cls, s, a):
+    def R(self, s, a):
         """
         The reward function.
         In this MDP, 1.0 for states 5 and 0 only. 
@@ -49,10 +50,9 @@ class LargeMDP(AbstractMDP):
         Returns:
             (float): The reward for the state and action
         """
-        return cls.R_MATRIX[s,a]
+        return self._r_matrix[s,a]
 
-    @classmethod
-    def T(cls, s, a):
+    def T(self, s, a):
         """
         The transition function
         Args:
@@ -64,4 +64,4 @@ class LargeMDP(AbstractMDP):
                                if s is non-terminal.
                                The zero-vector otherwise.
         """
-        return cls.T_MATRIX[s,a]
+        return self._t_matrix[s,a]

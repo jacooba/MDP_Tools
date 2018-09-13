@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod, abstractclassmethod
+from abc import ABC, abstractmethod
 import numpy as np
  
 class AbstractMDP(ABC):
@@ -13,8 +13,8 @@ class AbstractMDP(ABC):
         """
         self.gamma = gamma
     
-    @abstractclassmethod
-    def num_actions(cls):
+    @abstractmethod
+    def num_actions(self):
         """
         Get the number of actions (i.e. |A|)
         Returns:
@@ -22,8 +22,8 @@ class AbstractMDP(ABC):
         """
         pass
 
-    @abstractclassmethod
-    def num_states(cls):
+    @abstractmethod
+    def num_states(self):
         """
         Get the number of states (i.e. |S|)
         Returns:
@@ -31,8 +31,8 @@ class AbstractMDP(ABC):
         """
         pass
     
-    @abstractclassmethod
-    def R(cls, s, a):
+    @abstractmethod
+    def R(self, s, a):
         """
         The reward function.
         (Could be a function or return an entry from a precomputed R matrix)
@@ -44,8 +44,8 @@ class AbstractMDP(ABC):
         """
         pass
 
-    @abstractclassmethod
-    def T(cls, s, a):
+    @abstractmethod
+    def T(self, s, a):
         """
         The transition function.
         (Could be a function or return a row from a precomputed T matrix)
@@ -60,8 +60,7 @@ class AbstractMDP(ABC):
         """
         pass
 
-    @classmethod
-    def calculate_R_matrix(cls):
+    def calculate_R_matrix(self):
         """
         Compute the entire reward matrix using R. This is a separate function
         so that the matrix can be expanded lazily with R(s,a) to save memory.
@@ -69,10 +68,9 @@ class AbstractMDP(ABC):
             (np.array<float>): The rewards for every state action,
                                pair as a 2D array of shape (|S|,|A|)
         """
-        return cls.map_over_s_a_tuples(lambda s_a_tup: cls.R(*s_a_tup))
+        return self.map_over_s_a_tuples(lambda s_a_tup: self.R(*s_a_tup))
 
-    @classmethod
-    def calculate_T_matrix(cls):
+    def calculate_T_matrix(self):
         """
         Compute the entire transition matrix using T. This is a separate function
         so that the matrix can be expanded lazily with T(s,a) to save memory.
@@ -81,10 +79,9 @@ class AbstractMDP(ABC):
                                where entry (s, a, s') represents the probability of 
                                transitioning from s to s' given action a.
         """
-        return cls.map_over_s_a_tuples(lambda s_a_tup: cls.T(*s_a_tup))
+        return self.map_over_s_a_tuples(lambda s_a_tup: self.T(*s_a_tup))
 
-    @classmethod
-    def map_over_s_a_tuples(cls, function):
+    def map_over_s_a_tuples(self, function):
         """
         Returns a numpy array that results from mapping a function: (s,a)->iterable 
         over all (s,a) tuples
@@ -93,7 +90,7 @@ class AbstractMDP(ABC):
         Returns:
             (np.array<float>): The resulting map converted to a numpy array
         """
-        s_a_tuples_matrix = [[(s,a) for a in range(cls.num_actions())] for s in range(cls.num_states())]
+        s_a_tuples_matrix = [[(s,a) for a in range(self.num_actions())] for s in range(self.num_states())]
         new_matrix = list(map(lambda inner_list: list(map(function, inner_list)), s_a_tuples_matrix))
         return np.array(new_matrix)
 

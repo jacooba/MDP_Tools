@@ -1,7 +1,7 @@
 from solver.exact_solvers import VI
 from mdp.examples.acyclic_gridworld import AcyclicGridMDP
 from mdp.examples.berkeley_gridworld import BerkeleyGridMDP
-from mdp.examples.random_large import LargeMDP
+from mdp.examples.random_large import RandomLargeMDP
 
 from time import time
 
@@ -59,7 +59,7 @@ class MDPTests(unittest.TestCase):
         # (use lazy expansion since we will likely run out of RAM if not)
         
         np.random.seed(0)
-        mdp = LargeMDP()
+        mdp = RandomLargeMDP()
 
         t = time()
         Q_multi_proc = VI(mdp, H=2, lazy_expansion=True, num_process=15)

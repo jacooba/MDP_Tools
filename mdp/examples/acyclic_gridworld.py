@@ -109,13 +109,14 @@ class AcyclicGridMDP(AbstractMDP):
             (np.array<float>): The Q values represented as a
                                2D array of size (|S|,|A|)
         """
-        # V, except V[3] is Q values for up and down
-        V = np.array([1.0, self.gamma**1, 0.5*(self.gamma**2+self.gamma**3), self.gamma**2, self.gamma**1, 1.0])
+        g = self.gamma # easier to write
+        # V (except V[3] is wrong below. It is currently the Q value for up or down)
+        V = np.array([1.0, g**1, 0.5*(g**2+g**3), g**2, g**1, 1.0])
         # Q values are the same as V
         Q = np.reshape(V, (self.num_states(), 1))*np.ones((self.num_states(), self.num_actions()))
         # fix Q for left and right from f
-        Q[2, 0] = self.gamma**2 
-        Q[2, 1] = self.gamma**3
+        Q[2, 0] = g**2 
+        Q[2, 1] = g**3
         return Q
 
 

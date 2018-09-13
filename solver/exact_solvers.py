@@ -1,5 +1,6 @@
 from multiprocessing import Process, Array
 from ctypes import c_double
+
 import multiprocessing
 import itertools
 import numpy as np
@@ -9,7 +10,7 @@ def VI(mdp, H=10, lazy_expansion=True, num_process=1):
     """
     Solves for the Q values of the MDP using Value Iteration.
     Args:
-        mdp (abstract_mdp): The mdp to solve
+        mdp (AbstractMDP): The mdp to solve
         H (int): The horizon, i.e. number of iterations
     Returns:
         (np.array<float>): The Q values represented as a
@@ -44,13 +45,10 @@ def VI(mdp, H=10, lazy_expansion=True, num_process=1):
 
     # Define the Transition function (lazy or not lazy)
     if lazy_expansion:
-        T_func = mdp.T
-        R_func = mdp.R
+        T_func, R_func = mdp.T, mdp.R
     else:
-        T_matrix = mdp.calculate_T_matrix()
-        T_func = lambda s, a: T_matrix[s,a]
-        R_matrix = mdp.calculate_R_matrix()
-        R_func = lambda s, a: R_matrix[s, a]
+        T_matrix, R_matrix = mdp.calculate_T_matrix(), mdp.calculate_R_matrix()
+        T_func, R_func = lambda s, a: T_matrix[s,a], lambda s, a: R_matrix[s,a]
 
     # Get all state action (s,a) tuples
     s_a_tuples = list(itertools.product(range(mdp.num_states()), range(mdp.num_actions())))
