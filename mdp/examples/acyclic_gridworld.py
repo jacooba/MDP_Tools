@@ -1,5 +1,5 @@
-from mdp.abstract_mdp import AbstractMDP
 import numpy as np
+from mdp.abstract_mdp import AbstractMDP
 
 class AcyclicGridMDP(AbstractMDP):
     """

@@ -1,12 +1,11 @@
-from solver.exact_solvers import VI
+import unittest
+import numpy as np
+
+from time import time
+from solver.exact_solvers.value_iteration import ValueIteration
 from mdp.examples.acyclic_gridworld import AcyclicGridMDP
 from mdp.examples.berkeley_gridworld import BerkeleyGridMDP
 from mdp.examples.random_large import RandomLargeMDP
-
-from time import time
-
-import unittest
-import numpy as np
 
 class MDPTests(unittest.TestCase):
 
@@ -21,15 +20,15 @@ class MDPTests(unittest.TestCase):
                 for gamma in [0.0, 0.01, 0.234, 0.50, 0.911, 0.99, 1.0]:
 
                     mdp = AcyclicGridMDP(gamma=gamma)
-                    VI_solution = VI(mdp, H=10, lazy_expansion=is_lazy, num_process=1)
+                    VI_solution = ValueIteration(H=10, lazy_expansion=is_lazy, num_process=1).solve(mdp)
                     self.assertTrue(np.allclose(
                                         VI_solution, 
                                         mdp.calculate_known_solution()))
 
         # check that VI fails when number of threads is not positive
         with self.assertRaises(AssertionError):
-            VI(mdp, num_process=0)
-            VI(mdp, num_process=-1)
+            ValueIteration(num_process=0).solve(mdp)
+            ValueIteration(num_process=-1).solve(mdp)
 
     def test_VI_Berkeley(self):
         # Test on Berkeley MDP #
@@ -42,7 +41,7 @@ class MDPTests(unittest.TestCase):
                 # Test to make sure V is the same with with various Horizons
                 mdp = BerkeleyGridMDP()
                 for H in sorted(BerkeleyGridMDP.HORIZON_TO_KNOWN_V.keys()):
-                    VI_Q = VI(mdp, H=H, lazy_expansion=is_lazy, num_process=1)
+                    VI_Q = ValueIteration(H=H, lazy_expansion=is_lazy, num_process=1).solve(mdp)
                     VI_V = np.round(np.amax(VI_Q, axis=1), decimals=2)
                     known_V = BerkeleyGridMDP.HORIZON_TO_KNOWN_V[H]
                     self.assertEqual(list(VI_V), known_V)
@@ -62,11 +61,11 @@ class MDPTests(unittest.TestCase):
         mdp = RandomLargeMDP()
 
         t = time()
-        Q_multi_proc = VI(mdp, H=2, lazy_expansion=True, num_process=15)
+        Q_multi_proc = ValueIteration(H=2, lazy_expansion=True, num_process=15).solve(mdp)
         multi_process_time = time()-t
 
         t = time()
-        Q_single_proc = VI(mdp, H=2, lazy_expansion=True, num_process=1)
+        Q_single_proc = ValueIteration(H=2, lazy_expansion=True, num_process=1).solve(mdp)
         single_process_time = time()-t
 
         if single_process_time < multi_process_time:

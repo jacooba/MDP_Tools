@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
 import numpy as np
- 
+from abc import ABC, abstractmethod
+
 class AbstractMDP(ABC):
     """
     An abstract class for an MDP.
