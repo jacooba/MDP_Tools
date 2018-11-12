@@ -32,12 +32,12 @@ class ValueIteration(AbstractSolver):
 
         Time Complexity:    O( |S|*O(mdp.T) + H|A||S|*O(mdp.T) ) if lazy_expansion
                             O( |S|*O(mdp.T) + H|A||S|^2) )       otherwise
-        Space Complexity:   O( |A||S|^2 + O(mdp.T) )             if lazy_expansion
-                            O( |A||S|   + O(mdp.T) )             otherwise
+        Space Complexity:   O( |A||S|   + O(mdp.T) )             if lazy_expansion
+                            O( |A||S|^2 + O(mdp.T) )             otherwise
 
         Note that if mdp.T() is implemented as just returning a row from a precomputed
-        transition matrix, then the space and time complexity of mdp.T = O(|S|), and there is
-        no reason NOT to use lazy_expansion.
+        transition matrix, then the time complexity of mdp.T = O(|S|) and the space complexity
+        of mdp.T = O(|A||S|^2), and there is no reason NOT to use lazy_expansion.
 
         However, if the the space complexity of mdp.T() is O(|A||S|) and the time complexity is greater,
         as is common for a complicated transition function, then our time complexity increases by a 
